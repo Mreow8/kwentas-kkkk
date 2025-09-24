@@ -1,0 +1,480 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" type="x-icon" href="{% static 'KwentasApp/img/logobrowser.jpg' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kwentas Klaras Admin Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/a81368914c.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light.css"/>
+    <style>
+        .tippy-box[data-theme~='custom'] {
+            background-color: #1e293b;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+        .tippy-box[data-theme~='custom'][data-placement^='top'] > .tippy-arrow::before {
+            border-top-color: #1e293b;
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <section class="min-h-screen">
+        <div class="flex justify-center min-h-screen">
+            <div class="hidden lg:flex lg:w-2/5 items-center justify-center bg-white border-r border-gray-100">
+                <img src="{% static 'KwentasApp/img/logo.png' %}" alt="Municipality Logo" class="max-w-md w-4/5 object-contain p-8">
+            </div>
+
+            <div class="flex items-center w-full max-w-3xl p-8 mx-auto lg:px-12 lg:w-3/5">
+                <div class="w-full">
+                    <div class="mb-8">
+                        <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                            Create Admin Account
+                        </h1>
+                        <h2 class="text-xl text-gray-700 mb-4">
+                            Kwentas Klaras Project Management Information System
+                        </h2>
+                        <p class="text-gray-600">
+                            Please fill in the required information to assign an administrative account. This account will have access to manage and oversee the Kwentas Klaras system.
+                        </p>
+                    </div>
+
+                    <form id="dataForm" action="{% url 'register' %}" method="post" class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        {% csrf_token %}
+
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-700">Account Username</label>
+                            <input type="text" name="username" placeholder="e.g., john.doe" required
+                                class="block w-full px-4 py-3 text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-700">Full Name</label>
+                            <input type="text" name="name" placeholder="e.g., John Doe" required
+                                class="block w-full px-4 py-3 text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-700">Employee Email</label>
+                            <input type="email" name="email" placeholder="e.g., john.doe@boljoon.gov.ph" required
+                                class="block w-full px-4 py-3 text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                        </div>
+
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-700">Department</label>
+                            <div class="relative">
+                                <input type="text" name="department" placeholder="Select your department" onclick="toggleDropdown()" id="departmentInput" readonly required
+                                    class="block w-full px-4 py-3 text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 cursor-pointer" />
+                                <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                                <ul id="departmentOptions" class="hidden absolute w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+                                    <li onclick="selectOption('Mayor\'s Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Mayor's Office</li>
+                                    <li onclick="selectOption('Tourism Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Tourism Office</li>
+                                    <li onclick="selectOption('PESO Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">PESO Office</li>
+                                    <li onclick="selectOption('MDRRMO')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">MDDRMO</li>
+                                    <li onclick="selectOption('Sanguniang Baranggay Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Sanguniang Barangay Office</li>
+                                    <li onclick="selectOption('MPDC Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">MPDC</li>
+                                    <li onclick="selectOption('MCR Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">MCR Office</li>
+                                    <li onclick="selectOption('MBO Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">MBO Office</li>
+                                    <li onclick="selectOption('Accountant Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Accountant Office</li>
+                                    <li onclick="selectOption('Assessor Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Assessor's Office</li>
+                                    <li onclick="selectOption('MHO Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">MHO Office</li>
+                                    <li onclick="selectOption('Parks & Plaza')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Parks & Plaza</li>
+                                    <li onclick="selectOption('MSWD Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">MSWD Office</li>
+                                    <li onclick="selectOption('MENRO Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">MENRO Office</li>
+                                    <li onclick="selectOption('MO')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">MO</li>
+                                    <li onclick="selectOption('Streets & Bridges')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Streets & Bridges</li>
+                                    <li onclick="selectOption('LDF')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">LDF</li>
+                                    <li onclick="selectOption('Waterworks')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Waterworks</li>
+                                    <li onclick="selectOption('Markets')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Markets</li>
+                                    <li onclick="selectOption('Zero Waste')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Zero Waste</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="relative">
+                            <label class="block mb-2 text-sm font-medium text-gray-700">Password</label>
+                            <div class="relative" id="passwordContainer">
+                                <input type="password" id="password-input" name="password1" placeholder="Enter a strong password" required
+                                    class="block w-full px-4 py-3 text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                                <button type="button" class="show-password absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500">
+                                    <i class="fas fa-lock"></i>
+                                </button>
+                            </div>
+                            <p id="capsLockNote" class="hidden mt-2 text-sm text-red-600">Caps Lock is ON</p>
+                        </div>
+
+                        <div class="relative">
+                            <label class="block mb-2 text-sm font-medium text-gray-700">Confirm Password</label>
+                            <div class="relative">
+                                <input type="password" id="password-input-2" name="password2" placeholder="Re-enter your password" required
+                                    class="block w-full px-4 py-3 text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                                <button type="button" class="show-password absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500">
+                                    <i class="fas fa-lock"></i>
+                                </button>
+                            </div>
+                            <p id="capsLockNote2" class="hidden mt-2 text-sm text-red-600">Caps Lock is ON</p>
+                            <p id="passwordMatchNote" class="hidden mt-2 text-sm text-green-600">Passwords match!</p>
+                            <p id="passwordMismatchNote" class="hidden mt-2 text-sm text-red-600">Passwords do not match</p>
+                        </div>
+
+                        <div class="relative">
+                            <label class="block mb-2 text-sm font-medium text-gray-700">OTP Code</label>
+                            <div class="relative">
+                                <input type="text" name="verification_code" id="verificationCode" placeholder="Enter 6-digit OTP code" required
+                                    class="block w-full px-4 py-3 text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                                <button type="button" onclick="requestVerificationCode()" 
+                                    class="absolute right-2 top-1/2 transform -translate-y-1/2 px-4 py-1.5 text-sm text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none transition-colors duration-200">
+                                    Send Code
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 col-span-2 mt-6">
+                            <button type="submit"
+                                class="flex-1 px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
+                                Create Account
+                            </button>
+                            <a href="#" id="cancelButton"
+                                class="flex-1 px-6 py-3 text-center text-sm font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300 focus:ring-opacity-50">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function requestVerificationCode() {
+            const email = document.querySelector('input[name="email"]').value;  // Get email from the input field
+    
+            // Validate email format
+            if (!validateEmail(email)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Email',
+                    text: 'Please enter a valid email address.',
+                });
+                return;
+            }
+    
+            // Show loading spinner while request is in progress
+            Swal.fire({
+            title: 'Sending verification code...',
+            html: `
+                <div style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+                    <img src="{% static 'KwentasApp/img/loaderemail.gif' %}" style="width: 200px; height: 200px;" />
+                    <p style="font-size: 16px; color: #555;">Please wait for a moment.</p>
+                </div>
+            `,
+            allowOutsideClick: false,
+            showConfirmButton: false
+        });
+    
+            // Send a POST request to the backend to send the verification code
+            fetch('/send_verification_code/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')  // Include CSRF token
+                },
+                body: JSON.stringify({ email: email })  // Send the email to the server
+            })
+            .then(response => response.json())
+            .then(data => {
+                Swal.close();  // Close loading spinner
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Code Sent!',
+                        text: 'The verification code has been sent to your email.',
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: data.error,
+                    });
+                }
+            })
+            .catch(error => {
+                Swal.close();  // Close loading spinner
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Network Error!',
+                    text: 'Unable to connect to the server. Please check your internet connection.',
+                });
+            });
+        }
+    
+        // Function to validate email format
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(String(email).toLowerCase());
+        }
+    
+        // Function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+    
+
+    <script>
+  document.getElementById('dataForm').addEventListener('submit', function(event) {
+    event.preventDefault();  // Prevent default form submission
+    const formData = new FormData(this);
+    // Make an AJAX request to submit the form
+    fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // Show success message with SweetAlert
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: data.message,
+            }).then(() => {
+                window.location.href = "{% url 'register_page' %}";
+            });
+        } else {
+            // Display specific form errors with SweetAlert
+            let errorMessages = '';
+            for (const [field, errors] of Object.entries(data.errors)) {
+                errorMessages += `${field}: ${errors.join(', ')}\n`;
+            }
+            
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: errorMessages || data.message  // Show form errors or general error
+            });
+        }
+    })
+    .catch(error => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'An error occurred during form submission.'
+        });
+    });
+});
+        document.getElementById('cancelButton').addEventListener('click', function(event) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You will lose all unsaved data!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, cancel it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{% url 'homepage' %}";
+                }
+            });
+        });
+    
+        function toggleDropdown() {
+            const dropdown = document.getElementById('departmentOptions');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+    
+        function selectOption(option) {
+            document.getElementById('departmentInput').value = option;
+            document.getElementById('departmentOptions').style.display = 'none';
+        }
+    
+        const inputs = document.querySelectorAll(".input");
+    
+        function addcl(){
+            let parent = this.parentNode.parentNode;
+            parent.classList.add("focus");
+        }
+    
+        function remcl(){
+            let parent = this.parentNode.parentNode;
+            if(this.value == ""){
+                parent.classList.remove("focus");
+            }
+        }
+    
+        inputs.forEach(input => {
+            input.addEventListener("focus", addcl);
+            input.addEventListener("blur", remcl);
+        });
+
+        document.querySelectorAll('.show-password').forEach(function (element) {
+            element.addEventListener('click', function () {
+                var passwordInput = element.nextElementSibling.querySelector('.password-input');
+                var icon = element.querySelector('i');
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.classList.remove('fa-lock');
+                    icon.classList.add('fa-unlock-alt');
+                } else {
+                    passwordInput.type = 'password';
+                    icon.classList.remove('fa-unlock-alt');
+                    icon.classList.add('fa-lock');
+                }
+            });
+        });
+    </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const passwordInput = document.getElementById('password-input');
+        const capsLockNote = document.getElementById('capsLockNote');
+        const passwordRuleNote = document.getElementById('passwordRuleNote');
+
+        // Function to check if Caps Lock is on
+        function checkCapsLock(event) {
+            const capsLockOn = event.getModifierState && event.getModifierState('CapsLock');
+            capsLockNote.style.display = capsLockOn ? 'block' : 'none';
+            passwordRuleNote.style.display = capsLockOn ? 'none' : 'block';
+        }
+
+        // Hide the caps lock note and password rule note by default
+        capsLockNote.style.display = 'none';
+        passwordRuleNote.style.display = 'none';
+
+        // Event listener for keyup event on password input
+        passwordInput.addEventListener('keyup', function(event) {
+            checkCapsLock(event);
+        });
+
+        // Event listener for keydown event on password input (for handling Caps Lock on page load)
+        passwordInput.addEventListener('keydown', function(event) {
+            checkCapsLock(event);
+        });
+
+        // Event listener for click event on password input to show password rule note
+        passwordInput.addEventListener('click', function() {
+            passwordRuleNote.style.display = 'block';
+        });
+
+        // Event listener for blur event on password input to hide password rule note
+        passwordInput.addEventListener('blur', function() {
+            passwordRuleNote.style.display = 'none';
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const passwordInput1 = document.getElementById('password-input');
+        const capsLockNote1 = document.getElementById('capsLockNote');
+        const passwordInput2 = document.querySelector('input[name="password2"]');
+        const capsLockNote2 = document.getElementById('capsLockNote2');
+
+        // Function to check if Caps Lock is on for password1
+        function checkCapsLock1(event) {
+            const capsLockOn = event.getModifierState && event.getModifierState('CapsLock');
+            capsLockNote1.style.display = capsLockOn ? 'block' : 'none';
+        }
+
+        // Function to check if Caps Lock is on for password2
+        function checkCapsLock2(event) {
+            const capsLockOn = event.getModifierState && event.getModifierState('CapsLock');
+            capsLockNote2.style.display = capsLockOn ? 'block' : 'none';
+        }
+
+        // Hide the caps lock notes by default
+        capsLockNote1.style.display = 'none';
+        capsLockNote2.style.display = 'none';
+
+        // Event listeners for keyup and keydown events on password1
+        passwordInput1.addEventListener('keyup', function(event) {
+            checkCapsLock1(event);
+        });
+        passwordInput1.addEventListener('keydown', function(event) {
+            checkCapsLock1(event);
+        });
+
+        // Event listeners for keyup and keydown events on password2
+        passwordInput2.addEventListener('keyup', function(event) {
+            checkCapsLock2(event);
+        });
+        passwordInput2.addEventListener('keydown', function(event) {
+            checkCapsLock2(event);
+        });
+    });
+</script>
+
+<script>
+    const passwordInput1 = document.getElementById('password-input');
+    const passwordInput2 = document.getElementById('password-input-2');
+    const passwordMatchNote = document.getElementById('passwordMatchNote');
+    const passwordMismatchNote = document.getElementById('passwordMismatchNote');
+    
+    // Add event listeners to check if passwords match
+    passwordInput2.addEventListener('input', function() {
+        if (passwordInput2.value === '') {
+            // Hide both match and mismatch notes if the second password field is empty
+            passwordMatchNote.style.display = 'none';
+            passwordMismatchNote.style.display = 'none';
+        } else if (passwordInput1.value === passwordInput2.value) {
+            passwordMatchNote.style.display = 'block';  // Show matching message
+            passwordMismatchNote.style.display = 'none';  // Hide mismatch message
+        } else {
+            passwordMatchNote.style.display = 'none';   // Hide matching message
+            passwordMismatchNote.style.display = 'block'; // Show mismatch message
+        }
+    });
+
+</script>
+
+<script>
+    // Initialize tooltip for password requirements
+    document.addEventListener('DOMContentLoaded', function() {
+        tippy('#passwordContainer', {
+            content: `
+                <div class="p-2">
+                    <p class="font-medium mb-2">Password Requirements:</p>
+                    <ul class="list-disc pl-4 space-y-1">
+                        <li>At least 8 characters long</li>
+                        <li>Must include uppercase and lowercase letters</li>
+                        <li>Must include at least one number</li>
+                        <li>Cannot contain username or email</li>
+                        <li>Avoid common passwords</li>
+                    </ul>
+                </div>
+            `,
+            theme: 'custom',
+            placement: 'right',
+            trigger: 'mouseenter focus',
+            allowHTML: true,
+            interactive: true,
+            maxWidth: 300,
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" type="x-icon" href="{% static 'KwentasApp/img/logobrowser.jpg' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kwentas Klaras - Maintenance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-white dark:bg-gray-900">
+    <section class="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900">
+        <div class="text-center px-6">
+            <img src="{% static 'KwentasApp/img/logo.png' %}" alt="Kwentas Klaras Logo" class="mx-auto h-32 mb-6">
+            <div class="text-6xl font-extrabold text-yellow-500 mb-4">
+                <i class="fas fa-wrench rotate-45"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-yellow-500 mb-2">Under Maintenance</h1>
+            <div class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                Kwentas Klaras (Digital PMIS) v1.0
+            </div>
+            <p class="text-gray-600 dark:text-gray-400 mb-8 max-w-lg mx-auto">
+                We're currently performing system maintenance to improve your experience.
+                <span class="block mt-2 text-sm">Please try again later or contact the system administrator for more information.</span>
+            </p>
+            <div class="flex justify-center gap-4 flex-wrap">
+                <button onclick="window.history.back()" 
+                    class="px-5 py-2 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition-colors">
+                    Go Back
+                </button>
+                <a href="mailto:kwentasklarasboljoon@gmail.com?subject=Maintenance%20Inquiry" 
+                    class="px-5 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">
+                    Contact Admin
+                </a>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

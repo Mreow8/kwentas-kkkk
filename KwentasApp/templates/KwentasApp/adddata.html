@@ -1,0 +1,515 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Project - Kwentas Klaras</title>
+    <link rel="shortcut icon" type="x-icon" href="{% static 'KwentasApp/img/logobrowser.jpg' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/a81368914c.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Dropdown Styles */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            width: 100%;
+            max-height: 180px;
+            overflow-y: auto;
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+            margin-top: 2px;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-content li {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dropdown-content li:hover {
+            background-color: #f3f4f6;
+        }
+
+        /* Chevron rotation */
+        .chevron-rotate {
+            transform: rotate(180deg);
+            transition: transform 0.2s ease;
+        }
+
+        /* Optimize input heights */
+        input, select {
+            height: 42px !important;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 1rem;
+            }
+            
+            .form-field {
+                margin-bottom: 1rem;
+            }
+            
+            .dropdown-content {
+                max-height: 160px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <section class="min-h-screen">
+        <div class="flex flex-col lg:flex-row justify-center min-h-screen">
+            <!-- Logo section - hidden on mobile -->
+            <div class="hidden lg:flex lg:w-2/5 items-center justify-center bg-white border-r border-gray-100">
+                <img src="{% static 'KwentasApp/img/logo.png' %}" alt="Municipality Logo" class="max-w-md w-3/4 object-contain p-6">
+            </div>
+
+            <!-- Form section -->
+            <div class="flex items-center w-full p-4 mx-auto lg:w-3/5 lg:px-8">
+                <div class="w-full max-w-2xl mx-auto">
+                    <!-- Mobile logo -->
+                    <div class="flex justify-center mb-6 lg:hidden">
+                        <img src="{% static 'KwentasApp/img/logo.png' %}" alt="Municipality Logo" class="w-32 h-32 object-contain">
+                    </div>
+
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-gray-900 mb-1">
+                            Add New Project
+                        </h1>
+                        <h2 class="text-lg text-gray-700 mb-2">
+                            Kwentas Klaras Project Management Information System
+                        </h2>
+                        <p class="text-gray-600 text-sm">
+                            Please fill in the project details below. All fields are required to create a new project entry.
+                        </p>
+                    </div>
+
+                    <form id="dataForm" action="{% url 'create_entry' %}" method="post" class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        {% csrf_token %}
+
+                        <!-- Form fields - they will stack on mobile automatically -->
+                        <div class="form-field md:col-span-2 lg:col-span-1">
+                            <label class="block mb-1 text-sm font-medium text-gray-700">PPA (Programs, Projects, Activities)</label>
+                            <input type="text" name="ppa" placeholder="Enter project name" required
+                                class="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                        </div>
+
+                        <div class="form-field md:col-span-2 lg:col-span-1">
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Implementing Unit</label>
+                            <div class="relative">
+                                <input type="text" name="implementing_unit" placeholder="Select department" onclick="toggleDepartmentDropdown()" id="departmentInput" readonly required
+                                    class="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 cursor-pointer" />
+                                <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500" data-arrow="department"></i>
+                                <ul id="departmentOptions" class="dropdown-content">
+                                    <li onclick="selectDepartmentOption('Mayor\'s Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Mayor's Office</li>
+                                    <li onclick="selectDepartmentOption('Tourism Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Tourism Office</li>
+                                    <li onclick="selectDepartmentOption('BAC Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">BAC Office</li>
+                                    <li onclick="selectDepartmentOption('Accountant Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Accountant Office</li>
+                                    <li onclick="selectDepartmentOption('Engineering Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Engineering Office</li>
+                                    <li onclick="selectDepartmentOption('PESO Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">PESO Office</li>
+                                    <li onclick="selectDepartmentOption('MDRRMO')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">MDDRMO</li>
+                                    <li onclick="selectDepartmentOption('Sanguniang Baranggay Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Sanguniang Barangay Office</li>
+                                    <li onclick="selectDepartmentOption('MPDC Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">MPDC</li>
+                                    <li onclick="selectDepartmentOption('MCR Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">MCR Office</li>
+                                    <li onclick="selectDepartmentOption('MBO Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">MBO Office</li>
+                                    <li onclick="selectDepartmentOption('Assessor Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Assessor's Office</li>
+                                    <li onclick="selectDepartmentOption('MHO Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">MHO Office</li>
+                                    <li onclick="selectDepartmentOption('Parks & Plaza')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Parks & Plaza</li>
+                                    <li onclick="selectDepartmentOption('MSWD Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">MSWD Office</li>
+                                    <li onclick="selectDepartmentOption('MENRO Office')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">MENRO Office</li>
+                                    <li onclick="selectDepartmentOption('MO')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">MO</li>
+                                    <li onclick="selectDepartmentOption('Streets & Bridges')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Streets & Bridges</li>
+                                    <li onclick="selectDepartmentOption('LDF')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">LDF</li>
+                                    <li onclick="selectDepartmentOption('Waterworks')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Waterworks</li>
+                                    <li onclick="selectDepartmentOption('Markets')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Markets</li>
+                                    <li onclick="selectDepartmentOption('Zero Waste')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Zero Waste</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="form-field md:col-span-2 lg:col-span-1">
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Location</label>
+                            <div class="relative">
+                                <input type="text" name="location" placeholder="Select location" onclick="toggleLocationDropdown()" id="locationInput" readonly required
+                                    class="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 cursor-pointer" />
+                                <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500" data-arrow="location"></i>
+                                <ul id="locationOptions" class="dropdown-content">
+                                    <li onclick="selectLocationOption('Baranggay Baclayan')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Baranggay Baclayan</li>
+                                    <li onclick="selectLocationOption('Baranggay El Pardo')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Baraggay El Pardo</li>
+                                    <li onclick="selectLocationOption('Baranggay Granada')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Baranggay Granada</li>
+                                    <li onclick="selectLocationOption('Baranggay Lower Becerril')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Baraggay Lower Becerril</li>
+                                    <li onclick="selectLocationOption('Baranggay Poblacion')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Baranggay Poblacion</li>
+                                    <li onclick="selectLocationOption('Baranggay San Antonio')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Baraggay San Antonio</li>
+                                    <li onclick="selectLocationOption('Baranggay Upper Becerril')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Baranggay Upper Becerril</li>
+                                    <li onclick="selectLocationOption('Baranggay Arbor')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Baraggay Arbor</li>
+                                    <li onclick="selectLocationOption('Baranggay Lunop')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Baranggay Lunop</li>
+                                    <li onclick="selectLocationOption('Baranggay Nangka')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Baraggay Nangka</li>
+                                    <li onclick="selectLocationOption('Baranggay South Granada')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Baranggay South Granada</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="form-field md:col-span-2 lg:col-span-1">
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Appropriation</label>
+                            <input type="text" name="appropriation" placeholder="Enter amount" required id="appropriation-input"
+                                class="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                        </div>
+
+                        <div class="form-field md:col-span-2 lg:col-span-1">
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Start Date</label>
+                            <input type="date" name="start_date" required
+                                class="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                        </div>
+
+                        <div class="form-field md:col-span-2 lg:col-span-1">
+                            <label class="block mb-1 text-sm font-medium text-gray-700">End Date</label>
+                            <input type="date" name="end_date" required
+                                class="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                        </div>
+
+                        <div class="form-field md:col-span-2 lg:col-span-1">
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Remarks</label>
+                            <div class="relative">
+                                <input type="text" name="remarks" placeholder="Select remarks" onclick="toggleRemarksDropdown()" id="remarksInput" readonly required
+                                    class="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 cursor-pointer" />
+                                <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500" data-arrow="remarks"></i>
+                                <ul id="remarksOptions" class="dropdown-content">
+                                    <li onclick="selectRemarksOption('No PPMP/APP/POW')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">No PPMP/APP/POW</li>
+                                    <li onclick="selectRemarksOption('Awarded Already')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Awarded Already</li>
+                                    <li onclick="selectRemarksOption('Finished Already')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Finished Already</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="form-field md:col-span-2 lg:col-span-1">
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Code</label>
+                            <input type="text" name="code" placeholder="Enter project code" required
+                                class="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                        </div>
+
+                        <div class="form-field md:col-span-2 lg:col-span-1">
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Services</label>
+                            <div class="relative">
+                                <input type="text" name="services" placeholder="Select service type" onclick="toggleServicesDropdown()" id="servicesInput" readonly required
+                                    class="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40 cursor-pointer" />
+                                <i class="fas fa-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500" data-arrow="services"></i>
+                                <ul id="servicesOptions" class="dropdown-content">
+                                    <li onclick="selectServicesOption('General')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">General</li>
+                                    <li onclick="selectServicesOption('Social')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Social</li>
+                                    <li onclick="selectServicesOption('Economic')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Economic</li>
+                                    <li onclick="selectServicesOption('Environmental')" class="px-4 py-2 hover:bg-gray-50 cursor-pointer">Environmental</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="form-field md:col-span-2 lg:col-span-1">
+                            <label class="block mb-1 text-sm font-medium text-gray-700">Year</label>
+                            <input type="number" name="year" placeholder="Enter project year" required
+                                class="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-200 rounded-lg focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40" />
+                        </div>
+
+                        <!-- Buttons - full width on mobile -->
+                        <div class="flex flex-col md:flex-row gap-3 col-span-full mt-4">
+                            <button type="submit"
+                                class="w-full md:flex-1 px-6 py-2.5 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
+                                Create Project
+                            </button>
+                            <a href="{% url 'homepage' %}" id="cancelButton"
+                                class="w-full md:flex-1 px-6 py-2.5 text-center text-sm font-medium tracking-wide text-white capitalize transition-colors duration-200 transform bg-red-500 rounded-lg hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300 focus:ring-opacity-50">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script type="text/javascript" src="{% static 'KwentasApp/js/main.js' %}"></script>
+    <script>  
+        //INPUT MASKING
+        document.getElementById('appropriation-input').addEventListener('input', function (e) {
+            // Remove any non-numeric characters except decimal point
+            let value = e.target.value.replace(/[^0-9.]/g, '');
+            
+            // Ensure only one decimal point
+            const parts = value.split('.');
+            if (parts.length > 2) {
+                value = parts[0] + '.' + parts.slice(1).join('');
+            }
+            
+            // Limit decimal places to 5
+            if (parts.length === 2) {
+                parts[1] = parts[1].slice(0, 5);
+                value = parts[0] + '.' + parts[1];
+            }
+            
+            // Format the whole number part with commas
+            if (parts[0]) {
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                value = parts[0];
+                if (parts.length === 2) {
+                    value += '.' + parts[1];
+                }
+            }
+
+            // Set the formatted value back to the input field
+            e.target.value = value;
+        });
+    </script>
+    <script>
+    document.getElementById('cancelButton').addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default link behavior
+
+        Swal.fire({
+            title: 'Cancel Data Entry?',
+            text: "Are you sure you don't want to add data?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, cancel it!',
+            cancelButtonText: 'No, keep it'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "{% url 'homepage' %}";
+            }
+        });
+    });
+    </script>
+    <script>
+        function toggleDropdown(dropdownId, arrowId) {
+            const dropdown = document.getElementById(dropdownId);
+            const arrow = document.querySelector(`[data-arrow="${arrowId}"]`);
+            
+            // Close all other dropdowns first
+            document.querySelectorAll('.dropdown-content').forEach(content => {
+                if (content.id !== dropdownId && content.classList.contains('show')) {
+                    content.classList.remove('show');
+                    const otherArrow = document.querySelector(`[data-arrow="${content.id.replace('Options', '')}"]`);
+                    if (otherArrow) otherArrow.classList.remove('chevron-rotate');
+                }
+            });
+
+            // Toggle current dropdown
+            dropdown.classList.toggle('show');
+            if (arrow) arrow.classList.toggle('chevron-rotate');
+        }
+
+        function toggleDepartmentDropdown() {
+            toggleDropdown('departmentOptions', 'department');
+        }
+
+        function toggleLocationDropdown() {
+            toggleDropdown('locationOptions', 'location');
+        }
+
+        function toggleRemarksDropdown() {
+            toggleDropdown('remarksOptions', 'remarks');
+        }
+
+        function toggleServicesDropdown() {
+            toggleDropdown('servicesOptions', 'services');
+        }
+
+        function selectOption(inputId, value) {
+            const input = document.getElementById(inputId);
+            input.value = value;
+            
+            // Close dropdown and rotate arrow back
+            const dropdownId = inputId.replace('Input', 'Options');
+            const dropdown = document.getElementById(dropdownId);
+            const arrow = document.querySelector(`[data-arrow="${inputId.replace('Input', '')}"]`);
+            
+            dropdown.classList.remove('show');
+            if (arrow) arrow.classList.remove('chevron-rotate');
+        }
+
+        function selectDepartmentOption(value) {
+            selectOption('departmentInput', value);
+        }
+
+        function selectLocationOption(value) {
+            selectOption('locationInput', value);
+        }
+
+        function selectRemarksOption(value) {
+            selectOption('remarksInput', value);
+        }
+
+        function selectServicesOption(value) {
+            selectOption('servicesInput', value);
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            const isDropdownButton = event.target.matches('[id$="Input"]') || 
+                                   event.target.matches('[data-arrow]') ||
+                                   event.target.closest('[data-arrow]');
+            
+            if (!isDropdownButton) {
+                document.querySelectorAll('.dropdown-content').forEach(dropdown => {
+                    if (dropdown.classList.contains('show')) {
+                        dropdown.classList.remove('show');
+                        const arrowId = dropdown.id.replace('Options', '');
+                        const arrow = document.querySelector(`[data-arrow="${arrowId}"]`);
+                        if (arrow) arrow.classList.remove('chevron-rotate');
+                    }
+                });
+            }
+        });
+    </script>
+    <script>
+        const inputs = document.querySelectorAll(".input");
+
+        function addcl(){
+            let parent = this.parentNode.parentNode;
+            parent.classList.add("focus");
+        }
+
+        function remcl(){
+            let parent = this.parentNode.parentNode;
+            if(this.value == ""){
+                parent.classList.remove("focus");
+            }
+        }
+
+        inputs.forEach(input => {
+            input.addEventListener("focus", addcl);
+            input.addEventListener("blur", remcl);
+        });
+    </script>
+
+<script>
+    // SweetAlert confirmation before form submission
+    document.getElementById('dataForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Collecting form data
+        const formData = {
+            ppa: document.querySelector('input[name="ppa"]').value,
+            implementing_unit: document.getElementById('departmentInput').value,
+            location: document.getElementById('locationInput').value,
+            appropriation: document.querySelector('input[name="appropriation"]').value,
+            start_date: document.querySelector('input[name="start_date"]').value,
+            end_date: document.querySelector('input[name="end_date"]').value,
+            remarks: document.getElementById('remarksInput').value,
+            code: document.querySelector('input[name="code"]').value,
+            services: document.getElementById('servicesInput').value,
+            year: document.querySelector('input[name="year"]').value,
+        };
+
+        // Constructing confirmation message in invoice format
+        const confirmationMessage = `
+            <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.5;">
+                <h2 style="text-align: center; font-size: 24px; margin-bottom: 20px;">Add Project Confirmation</h2>
+                <div style="margin-bottom: 20px;">
+                    <strong><h4 style="font-size: 18px; margin-bottom: 5px;">PPA:</strong> ${formData.ppa}</h4>
+                    <strong><p style="margin: 0; font-size: 14px;">Implementing Unit:</strong> ${formData.implementing_unit}</p>
+                    <strong><p style="margin: 0; font-size: 14px;">Location:</strong> ${formData.location}</p>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <h4 style="font-size: 18px; margin-bottom: 5px;">Details</h4>
+                    <p style="margin: 0; font-size: 14px;"><strong>Appropriation:</strong> ${formData.appropriation}</p>
+                    <p style="margin: 0; font-size: 14px;"><strong>Start Date:</strong> ${formData.start_date}</p>
+                    <p style="margin: 0; font-size: 14px;"><strong>End Date:</strong> ${formData.end_date}</p>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <h4 style="font-size: 18px; margin-bottom: 5px;">Remarks</h4>
+                    <p style="margin: 0; font-size: 14px;">${formData.remarks}</p>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <h4 style="font-size: 18px; margin-bottom: 5px;">Code & Services</h4>
+                    <p style="margin: 0; font-size: 14px;"><strong>Code:</strong> ${formData.code}</p>
+                    <p style="margin: 0; font-size: 14px;"><strong>Services:</strong> ${formData.services}</p>
+                    <p style="margin: 0; font-size: 14px;"><strong>Year:</strong> ${formData.year}</p>
+                </div>
+                <div style="border-top: 1px solid #ddd; margin-top: 20px; padding-top: 10px;">
+                    <p style="font-weight: bold; font-size: 16px; text-align: center;">Please confirm your data</p>
+                </div>
+            </div>
+        `;
+
+        // Display SweetAlert
+        Swal.fire({
+            html: confirmationMessage,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            customClass: {
+                popup: 'custom-popup' // Add a custom class for further styling if needed
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.submit(); // Submit the form if confirmed
+            }
+        });
+    });
+</script>
+
+{% if messages %}
+    {% for message in messages %}
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function() {
+                // Create an array to hold messages
+                var messages = [];
+
+                // Push each message into the array
+                messages.push({
+                    'tag': '{{ message.tags|escapejs }}',
+                    'text': '{{ message|escapejs }}'
+                });
+
+                // Iterate through the messages array and display SweetAlert
+                messages.forEach(function(message) {
+                    if (message.tag === 'error') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: message.text,
+                            confirmButtonColor: '#3085d6'
+                        });
+                    } else if (message.tag === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: message.text,
+                            confirmButtonColor: '#3085d6'
+                        });
+                    }
+                });
+            });
+        </script>
+    {% endfor %}
+{% endif %}
+
+    <!-- Update the dropdown HTML in your form to include data-arrow attributes -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update all dropdown arrows with data attributes
+            const dropdowns = ['department', 'location', 'remarks', 'services'];
+            dropdowns.forEach(type => {
+                const arrow = document.querySelector(`#${type}Input + i`);
+                if (arrow) {
+                    arrow.setAttribute('data-arrow', type);
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
